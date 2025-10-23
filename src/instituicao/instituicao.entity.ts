@@ -1,6 +1,6 @@
 import * as bcrypt from "bcrypt"
 
-export class UsuarioEntity{
+export class InstituicaoEntity{
   
     id: string;
     nome: string;

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UsuarioEntity } from "./usuario.entity";
-import { AlteraUsuarioDTO } from "./dto/alteraUsuario.dto";
+
 
 @Injectable()
 export class UsuariosArmazenados{
@@ -27,6 +27,27 @@ export class UsuariosArmazenados{
         return possivelUsuario;
     }
 
+    private BuscaPorEmail(email: string): UsuarioEntity {
+        const possivelUsuario = this.#usuarios.find(
+            usuarioSalvo => usuarioSalvo.email === email
+        );
+
+        if (!possivelUsuario) {
+            throw new Error('Usuário não encontrado');
+        }
+        return possivelUsuario;
+    }
+
+
+    loginUsuario(email: string, senha: string): UsuarioEntity | null {
+        const possivelUsuario = this.BuscaPorEmail(email);
+
+        if(possivelUsuario && possivelUsuario.login(senha)){
+            return possivelUsuario;
+        }
+        return null;
+    }
+
     async removeUsuario(id: string) {
         const usuario = this.BuscaPorID(id);
 
@@ -47,6 +68,9 @@ export class UsuariosArmazenados{
                 }else if (valor === undefined) {
                     return;
 
+                } else if (chave === 'senha' && typeof valor === 'string'){
+                    possivelUsuario.trocarSenha(valor);
+                    return;
                 }
                 possivelUsuario[chave] = valor;
             }
@@ -61,3 +85,4 @@ export class UsuariosArmazenados{
 
     
 }
+
